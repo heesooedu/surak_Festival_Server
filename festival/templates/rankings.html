@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow-lg">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="mb-0 fw-bold">실시간 랭킹 Top 10</h3>
+      <span class="text-secondary small">5초마다 자동 갱신</span>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-dark table-striped" id="ranking-table">
+        <thead><tr><th>순위</th><th>이름</th><th>학번</th><th>포인트</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+  async function loadRankings() {
+    const res = await fetch('{{ url_for('main.api_rankings') }}');
+    const data = await res.json();
+    const tbody = document.querySelector('#ranking-table tbody');
+    tbody.innerHTML = '';
+    data.forEach(item => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${item.rank}</td><td>${item.name}</td><td>${item.student_id}</td><td class="fw-bold text-info">${item.points}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  loadRankings();
+  setInterval(loadRankings, 5000);
+</script>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row g-3 align-items-center mb-4">
+  <div class="col">
+    <h2 class="fw-bold">오늘의 부스</h2>
+    <p class="text-secondary">대기열이 짧은 순서로 정렬됩니다.</p>
+  </div>
+  <div class="col-auto">
+    <a class="btn btn-outline-light" href="{{ url_for('main.booth_list') }}">전체 보기</a>
+  </div>
+</div>
+<div class="row g-3 mb-5">
+  {% for booth in booths %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      {% if booth.hero_image %}
+        <img class="hero-img" src="{{ url_for('static', filename='img/' ~ booth.hero_image) }}" alt="{{ booth.name }}">
+      {% endif %}
+      <div class="card-body d-flex flex-column">
+        <div class="d-flex align-items-center mb-2">
+          <h5 class="card-title mb-0 flex-grow-1">{{ booth.name }}</h5>
+          <span class="badge text-bg-warning">대기 {{ booth.queue_length }}명</span>
+        </div>
+        <p class="text-secondary small">{{ booth.description or '부스 설명이 준비 중입니다.' }}</p>
+        <div class="mt-auto d-flex justify-content-between align-items-center">
+          <span class="text-info">{{ booth.location or '위치 미정' }}</span>
+          <a class="btn btn-outline-light btn-sm" href="{{ url_for('main.booth_detail', booth_id=booth.id) }}">자세히</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<div class="card shadow-lg">
+  <div class="card-body">
+    <div class="d-flex align-items-center mb-3">
+      <h4 class="mb-0 flex-grow-1">포인트 랭킹 Top 10</h4>
+      <a class="btn btn-outline-light btn-sm" href="{{ url_for('main.ranking_board') }}">보드 보기</a>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-dark table-striped align-middle mb-0">
+        <thead>
+          <tr><th>순위</th><th>이름</th><th>학번</th><th>포인트</th></tr>
+        </thead>
+        <tbody>
+          {% for idx, student in enumerate(top_students) %}
+          <tr>
+            <td>{{ idx+1 }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{ student.student_id[:2] ~ '***' ~ student.student_id[-2:] }}</td>
+            <td class="fw-bold text-info">{{ student.point_balance }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

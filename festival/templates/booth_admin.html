@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <h4 class="fw-bold mb-3">{{ booth.name }} 부스 관리</h4>
+        <form method="post" class="d-flex align-items-center gap-2 mb-3">
+          <input type="hidden" name="action" value="set">
+          <div class="flex-grow-1">
+            <label class="form-label small">현재 대기 인원</label>
+            <input type="number" min="0" name="queue_length" value="{{ booth.queue_length }}" class="form-control">
+          </div>
+          <button class="btn btn-primary mt-3">저장</button>
+        </form>
+        <div class="d-flex gap-2 mb-3">
+          <form method="post">
+            <input type="hidden" name="action" value="increment">
+            <button class="btn btn-success">+1</button>
+          </form>
+          <form method="post">
+            <input type="hidden" name="action" value="decrement">
+            <button class="btn btn-danger">-1</button>
+          </form>
+        </div>
+        <form method="post" enctype="multipart/form-data" action="{{ url_for('admin.upload_hero_image') }}" class="mb-3">
+          <label class="form-label small">대표 이미지</label>
+          <input type="file" name="hero" class="form-control form-control-sm mb-2">
+          <button class="btn btn-outline-light btn-sm">업로드</button>
+        </form>
+        <form method="post">
+          <input type="hidden" name="action" value="set">
+          <div class="mb-2">
+            <label class="form-label small">부스 설명</label>
+            <textarea name="description" class="form-control" rows="2">{{ booth.description }}</textarea>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">위치</label>
+            <input name="location" class="form-control" value="{{ booth.location }}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">운영 시간</label>
+            <input name="operating_hours" class="form-control" value="{{ booth.operating_hours }}">
+          </div>
+          <button class="btn btn-outline-info">정보 저장</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="fw-bold">포인트 변경 (QR 스캔 결과 입력)</h5>
+        <form method="post" action="{{ url_for('main.booth_admin_points') }}" class="row g-2">
+          <div class="col-12">
+            <label class="form-label small">학생 학번</label>
+            <input name="student_id" class="form-control" placeholder="QR 스캔 결과">
+          </div>
+          <div class="col-6">
+            <label class="form-label small">변경 값(+/-)</label>
+            <input name="delta" type="number" class="form-control" required>
+          </div>
+          <div class="col-6">
+            <label class="form-label small">사유</label>
+            <input name="reason" class="form-control" placeholder="예: 게임 보상">
+          </div>
+          <div class="col-12 d-grid">
+            <button class="btn btn-primary">적용</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="fw-bold mb-3">홍보 게시물</h5>
+        <form method="post" action="{{ url_for('main.booth_post_editor') }}" class="mb-3">
+          <div class="mb-2">
+            <label class="form-label small">제목</label>
+            <input name="title" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">내용</label>
+            <textarea name="content" class="form-control" rows="2"></textarea>
+          </div>
+          <button class="btn btn-outline-light btn-sm">게시</button>
+        </form>
+        <div class="list-group list-group-flush">
+          {% for post in posts %}
+          <div class="list-group-item bg-transparent text-light">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="fw-semibold">{{ post.title }}</div>
+              <form method="post" action="{{ url_for('main.delete_booth_post', post_id=post.id) }}">
+                <button class="btn btn-sm btn-outline-danger">삭제</button>
+              </form>
+            </div>
+            <div class="small text-secondary">{{ post.created_at.strftime('%m/%d %H:%M') }}</div>
+            <p class="mb-0">{{ post.content }}</p>
+          </div>
+          {% else %}
+          <p class="text-secondary">등록된 게시물이 없습니다.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

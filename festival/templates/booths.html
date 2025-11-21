@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex align-items-center mb-3">
+  <h3 class="fw-bold flex-grow-1">전체 부스 대기열</h3>
+  <span class="text-secondary">5~10초마다 새로고침해 주세요.</span>
+</div>
+<div class="row g-3">
+  {% for booth in booths %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-0">{{ booth.name }}</h5>
+          <span class="badge text-bg-warning">대기 {{ booth.queue_length }}명</span>
+        </div>
+        <p class="small text-secondary">{{ booth.description or '설명 준비 중' }}</p>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-info">{{ booth.location or '위치 미정' }}</span>
+          <a class="btn btn-outline-light btn-sm" href="{{ url_for('main.booth_detail', booth_id=booth.id) }}">홍보 페이지</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
