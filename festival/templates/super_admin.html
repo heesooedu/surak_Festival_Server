@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="fw-bold">부스 생성</h5>
+        <form method="post" class="mb-3">
+          <input type="hidden" name="action" value="create_booth">
+          <div class="mb-2">
+            <label class="form-label small">이름</label>
+            <input name="name" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">설명</label>
+            <textarea name="description" class="form-control" rows="2"></textarea>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">위치</label>
+            <input name="location" class="form-control">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">운영 시간</label>
+            <input name="operating_hours" class="form-control">
+          </div>
+          <button class="btn btn-primary">생성</button>
+        </form>
+        <h5 class="fw-bold">부스 관리자 생성</h5>
+        <form method="post" class="mb-3">
+          <input type="hidden" name="action" value="create_admin">
+          <div class="mb-2">
+            <label class="form-label small">부스</label>
+            <select name="booth_id" class="form-select" required>
+              {% for booth in booths %}<option value="{{ booth.id }}">{{ booth.name }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">아이디</label>
+            <input name="username" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">비밀번호</label>
+            <input name="password" class="form-control" required>
+          </div>
+          <button class="btn btn-outline-light">생성</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="fw-bold">포인트 일괄 지급</h5>
+        <form method="post" class="mb-3">
+          <input type="hidden" name="action" value="award_all">
+          <div class="mb-2">
+            <label class="form-label small">지급 포인트</label>
+            <input name="amount" type="number" class="form-control" value="100">
+          </div>
+          <button class="btn btn-success">전체 지급</button>
+        </form>
+        <h5 class="fw-bold">학생 개별 지급</h5>
+        <form method="post">
+          <input type="hidden" name="action" value="award_one">
+          <div class="mb-2">
+            <label class="form-label small">학번</label>
+            <input name="student_id" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">지급 포인트</label>
+            <input name="amount" type="number" class="form-control" value="50">
+          </div>
+          <button class="btn btn-primary">지급</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="fw-bold">부스 & 관리자 목록</h5>
+        <ul class="list-group list-group-flush mb-3">
+          {% for booth in booths %}
+          <li class="list-group-item bg-transparent text-light">
+            <div class="fw-semibold">{{ booth.name }}</div>
+            <div class="small text-secondary">대기 {{ booth.queue_length }}명 · 위치 {{ booth.location or '미정' }}</div>
+          </li>
+          {% endfor %}
+        </ul>
+        <h6 class="fw-bold">관리자</h6>
+        <ul class="list-group list-group-flush">
+          {% for admin in admins %}
+          <li class="list-group-item bg-transparent text-light">
+            {{ admin.username }} ({{ '슈퍼' if admin.is_super_admin else admin.booth.name if admin.booth else '부스 미지정' }})
+          </li>
+          {% endfor %}
+        </ul>
+        <div class="mt-3">
+          <a class="btn btn-outline-info btn-sm" href="{{ url_for('main.transaction_log') }}">트랜잭션 조회</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
